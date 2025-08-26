@@ -100,7 +100,9 @@ class SingleAuthorView(APIView):
 
     def post(self,request,*args,**kwargs):
 
-        serializer_obj = AuthorSerializer(data = request.data)
+        record_to_create = request.data
+
+        serializer_obj = AuthorSerializer(data = record_to_create)
 
         if serializer_obj.is_valid(raise_exception = True):
 
@@ -118,7 +120,9 @@ class SingleAuthorView(APIView):
 
         query = Author.objects.get(author_id = id)
 
-        serializer_obj = AuthorSerializer(query,data = request.data)
+        record_to_update = request.data
+
+        serializer_obj = AuthorSerializer(query,data = record_to_update)
 
         if serializer_obj.is_valid(raise_exception = True):
 
@@ -161,15 +165,7 @@ class SingleBookView(APIView):
 
     def post(self,request,*args,**kwargs):
 
-        serializer_obj = BooksSerializer(data = request.data)
-
-        if serializer_obj.is_valid(raise_exception=True):
-
-            serializer_obj.save()
-
-            return Response(serializer_obj.data, status=status.HTTP_201_CREATED)
-        
-        return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
+        pass
 
     
 # API View to filter out all the books based on author name
