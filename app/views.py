@@ -16,6 +16,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.views import APIView
 
+from rest_framework import status
+
 
 # Function based view
 
@@ -80,6 +82,8 @@ class ListBooksView(APIView):
 
 class SingleAuthorView(APIView):
 
+    # API logic to Read
+
     def get(self,request,*args,**kwargs):
 
         id = kwargs.get('id')
@@ -89,6 +93,20 @@ class SingleAuthorView(APIView):
         serializer_class = AuthorSerializer(query, many= True)
 
         return Response(serializer_class.data)
+    
+    # API logic to Create
+
+    def post(self,request,*args,**kwargs):
+
+        serializer_obj = AuthorSerializer(data = request.data)
+
+        if serializer_obj.is_valid(raise_exception = True):
+
+            serializer_obj.save()
+
+            return Response(serializer_obj.data, status = status.HTTP_201_CREATED)
+        
+        return Response(serializer_obj.errors, status = status.HTTP_400_BAD_REQUEST)
     
 #Book API View
 
@@ -104,7 +122,7 @@ class SingleBookView(APIView):
 
         return Response(serializer_class.data)
     
-# API View to filter out all the books based on author name.
+# API View to filter out all the books based on author name
     
 class BooksByAuthorView(APIView):
 
