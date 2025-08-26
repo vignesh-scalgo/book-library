@@ -63,6 +63,7 @@ class ListAuthorView(APIView):
         serializer_class = AuthorSerializer(query, many= True)
 
         return Response(serializer_class.data)
+
     
 # Books API View
 
@@ -76,13 +77,14 @@ class ListBooksView(APIView):
 
         return Response(serializer_class.data)
 
+
 # Individual Author and Book API view
 
 #Author API View
 
 class SingleAuthorView(APIView):
 
-    # API logic to Read
+    # API logic to Read Author
 
     def get(self,request,*args,**kwargs):
 
@@ -94,7 +96,7 @@ class SingleAuthorView(APIView):
 
         return Response(serializer_class.data)
     
-    # API logic to Create
+    # API logic to Create Author
 
     def post(self,request,*args,**kwargs):
 
@@ -107,6 +109,25 @@ class SingleAuthorView(APIView):
             return Response(serializer_obj.data, status = status.HTTP_201_CREATED)
         
         return Response(serializer_obj.errors, status = status.HTTP_400_BAD_REQUEST)
+    
+    # API logic to Update Author
+
+    def put(self,request,*args,**kwargs):
+
+        id = kwargs.get('id')
+
+        query = Author.objects.get(author_id = id)
+
+        serializer_obj = AuthorSerializer(query,data = request.data)
+
+        if serializer_obj.is_valid(raise_exception = True):
+
+            serializer_obj.save()
+
+            return Response(serializer_obj.data, status=status.HTTP_202_ACCEPTED)
+        
+        return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 #Book API View
 
@@ -121,6 +142,7 @@ class SingleBookView(APIView):
         serializer_class = BooksSerializer(query, many=True)
 
         return Response(serializer_class.data)
+
     
 # API View to filter out all the books based on author name
     
