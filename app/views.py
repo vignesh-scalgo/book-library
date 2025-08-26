@@ -167,8 +167,6 @@ class SingleBookView(APIView):
 
         new_record = request.data
 
-        print(new_record)
-
         author_name = new_record.get('book_author')
 
         author_record = Author.objects.get(author_name = author_name)
@@ -176,8 +174,6 @@ class SingleBookView(APIView):
         author_id = author_record.author_id
 
         new_record.update({'book_author':author_id})
-
-        print(new_record)
 
         serializer_obj = BooksSerializer(data = new_record)
 
