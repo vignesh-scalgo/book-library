@@ -99,38 +99,51 @@ class SingleAuthorView(APIView):
     # API logic to Create Author
 
     def post(self,request,*args,**kwargs):
+            
+        try:
 
-        record_to_create = request.data
+            record_to_create = request.data
 
-        serializer_obj = AuthorSerializer(data = record_to_create)
+            serializer_obj = AuthorSerializer(data = record_to_create)
 
-        if serializer_obj.is_valid(raise_exception = True):
+            if serializer_obj.is_valid(raise_exception = True):
 
-            serializer_obj.save()
+                serializer_obj.save()
 
-            return Response(serializer_obj.data, status = status.HTTP_201_CREATED)
+                return Response(serializer_obj.data, status = status.HTTP_201_CREATED)
+            
+            return Response(serializer_obj.errors, status = status.HTTP_400_BAD_REQUEST)
         
-        return Response(serializer_obj.errors, status = status.HTTP_400_BAD_REQUEST)
+        except:
+
+            return Response(status = status.HTTP_400_BAD_REQUEST)
     
     # API logic to Update Author
 
     def put(self,request,*args,**kwargs):
+            
+        try:
 
-        id = kwargs.get('id')
+            id = kwargs.get('id')
 
-        query = Author.objects.get(author_id = id)
+            query = Author.objects.get(author_id = id)
 
-        record_to_update = request.data
+            record_to_update = request.data
 
-        serializer_obj = AuthorSerializer(query,data = record_to_update)
+            serializer_obj = AuthorSerializer(query,data = record_to_update)
 
-        if serializer_obj.is_valid(raise_exception = True):
+            if serializer_obj.is_valid(raise_exception = True):
 
-            serializer_obj.save()
+                serializer_obj.save()
 
-            return Response(serializer_obj.data, status=status.HTTP_202_ACCEPTED)
+                return Response(serializer_obj.data, status=status.HTTP_202_ACCEPTED)
+            
+            return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
     
     # API logic to Delete Author
 
@@ -164,54 +177,66 @@ class SingleBookView(APIView):
     # API to create book
 
     def post(self,request,*args,**kwargs):
+            
+        try:
 
-        new_record = request.data
+            new_record = request.data
 
-        author_name = new_record.get('book_author')
+            author_name = new_record.get('book_author')
 
-        author_record = Author.objects.get(author_name = author_name)
+            author_record = Author.objects.get(author_name = author_name)
 
-        author_id = author_record.author_id
+            author_id = author_record.author_id
 
-        new_record.update({'book_author':author_id})
+            new_record.update({'book_author':author_id})
 
-        serializer_obj = BooksSerializer(data = new_record)
+            serializer_obj = BooksSerializer(data = new_record)
 
-        if serializer_obj.is_valid(raise_exception=True):
+            if serializer_obj.is_valid(raise_exception=True):
 
-            serializer_obj.save()
+                serializer_obj.save()
 
-            return Response(serializer_obj.data, status=status.HTTP_201_CREATED)
+                return Response(serializer_obj.data, status=status.HTTP_201_CREATED)
+            
+            return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     # API to update book
 
     def put(self,request,*args,**kwargs):
+            
+        try:
 
-        id = kwargs.get('id')
+            id = kwargs.get('id')
 
-        query = Books.objects.get(book_id = id)
+            query = Books.objects.get(book_id = id)
 
-        record_to_update = request.data
+            record_to_update = request.data
 
-        author_name = record_to_update.get('book_author')
+            author_name = record_to_update.get('book_author')
 
-        author_record = Author.objects.get(author_name = author_name)
+            author_record = Author.objects.get(author_name = author_name)
 
-        author_id = author_record.author_id
+            author_id = author_record.author_id
 
-        record_to_update.update({'book_author':author_id})
+            record_to_update.update({'book_author':author_id})
 
-        serializer_obj = BooksSerializer(query, data = record_to_update)
+            serializer_obj = BooksSerializer(query, data = record_to_update)
 
-        if serializer_obj.is_valid(raise_exception=True):
+            if serializer_obj.is_valid(raise_exception=True):
 
-            serializer_obj.save()
+                serializer_obj.save()
 
-            return Response(serializer_obj.data, status=status.HTTP_202_ACCEPTED)
+                return Response(serializer_obj.data, status=status.HTTP_202_ACCEPTED)
+            
+            return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+
+            return Response(status=status.HTTP_400_BAD_REQUEST)
     
     # API to delete book
 
