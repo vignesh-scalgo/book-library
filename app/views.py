@@ -184,6 +184,18 @@ class SingleBookView(APIView):
             return Response(serializer_obj.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # API to delete book
+
+    def delete(self,request,*args,**kwargs):
+
+        id = kwargs.get('id')
+
+        book_record = Books.objects.get(book_id = id)
+
+        book_record.delete()
+
+        return Response({'success':'record deleted successfully'},status=status.HTTP_200_OK)
 
     
 # API View to filter out all the books based on author name
