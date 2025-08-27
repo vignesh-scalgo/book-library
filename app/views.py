@@ -184,6 +184,34 @@ class SingleBookView(APIView):
             return Response(serializer_obj.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # API to update book
+
+    def put(self,request,*args,**kwargs):
+
+        id = kwargs.get('id')
+
+        query = Books.objects.get(book_id = id)
+
+        record_to_update = request.data
+
+        author_name = record_to_update.get('book_author')
+
+        author_record = Author.objects.get(author_name = author_name)
+
+        author_id = author_record.author_id
+
+        record_to_update.update({'book_author':author_id})
+
+        serializer_obj = BooksSerializer(query, data = record_to_update)
+
+        if serializer_obj.is_valid(raise_exception=True):
+
+            serializer_obj.save()
+
+            return Response(serializer_obj.data, status=status.HTTP_202_ACCEPTED)
+        
+        return Response(serializer_obj.errors, status=status.HTTP_400_BAD_REQUEST)
     
     # API to delete book
 
