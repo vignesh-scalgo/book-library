@@ -22,6 +22,8 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 
 from rest_framework.permissions import IsAuthenticated
 
+from book_project.settings import CREDENTIALS
+
 
 # Function based view
 
@@ -58,8 +60,9 @@ class ListAuthorView(APIView):
 
     # Local - class based specific view authentication
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated,]
+    authentication_classes = (TokenAuthentication,)
 
     def get(self,request,*args,**kwargs):
 
@@ -80,11 +83,19 @@ class ListBooksView(APIView):
 
     def get(self,request,*args,**kwargs):
 
-        query = Books.objects.all()
+        username = request.headers.get('username')
 
-        serializer_class = BooksSerializer(query, many=True)
+        password = request.headers.get('password')
 
-        return Response(serializer_class.data)
+        if username == CREDENTIALS.get('username') and password == CREDENTIALS.get('password'):
+
+            query = Books.objects.all()
+
+            serializer_class = BooksSerializer(query, many=True)
+
+            return Response(serializer_class.data)
+        
+        return Response({"detail": "Invalid username/password."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # Individual Author and Book API view
