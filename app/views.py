@@ -56,6 +56,8 @@ def list_author(request):
 
 class ListAuthorView(APIView):
 
+    # Local - class based specific view authentication
+
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
