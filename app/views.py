@@ -18,11 +18,13 @@ from rest_framework import status
 
 # For Authentication
 
+from django.conf import settings
+
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 
 from rest_framework.permissions import IsAuthenticated
 
-from book_project.settings import CREDENTIALS
+from .authentication import GlobalCredentialsAuthentication
 
 
 # Function based view
@@ -61,8 +63,12 @@ class ListAuthorView(APIView):
     # Local - class based specific view authentication
 
     # authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+
     permission_classes = [IsAuthenticated,]
-    authentication_classes = (TokenAuthentication,)
+
+    # Custom authentication
+
+    authentication_classes = [BasicAuthentication, GlobalCredentialsAuthentication,]
 
     def get(self,request,*args,**kwargs):
 
@@ -77,7 +83,7 @@ class ListAuthorView(APIView):
         return Response(serializer_class.data)
 
     
-# Books API View
+# Books API View --> Return response only when we pass username and password in Headers section
 
 class ListBooksView(APIView):
 
@@ -87,7 +93,7 @@ class ListBooksView(APIView):
 
         password = request.headers.get('password')
 
-        if username == CREDENTIALS.get('username') and password == CREDENTIALS.get('password'):
+        if username == settings.CREDENTIALS.get('username') and password == settings.CREDENTIALS.get('password'):
 
             query = Books.objects.all()
 
