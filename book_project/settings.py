@@ -150,13 +150,13 @@ REST_FRAMEWORK = {
     
     'DEFAULT_AUTHENTICATION_CLASSES': [
 
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
 
         # Custom Authentication
 
-        'app.authentication.GlobalCredentialsAuthentication'
+        # 'app.authentication.GlobalCredentialsAuthentication'
 
     ],
 }

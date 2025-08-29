@@ -290,3 +290,10 @@ class BooksByAuthorView(APIView):
         serializer_class = BooksSerializer(query, many=True)
 
         return Response(serializer_class.data)
+    
+
+# 
+
+class TokenGenerationView(APIView):
+
+    pass
