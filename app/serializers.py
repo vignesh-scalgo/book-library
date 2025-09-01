@@ -42,6 +42,7 @@ class BooksSerializer(serializers.ModelSerializer):
 
         return data
     
+"""
 # Token based authentication - by default user model
 
 # Serializer for credentials to generate token
@@ -86,3 +87,4 @@ class AuthUserSerializer(serializers.ModelSerializer):
         model = users
 
         fields = '__all__'
+"""
