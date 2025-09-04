@@ -26,6 +26,9 @@ from rest_framework.permissions import IsAuthenticated
 
 from .authentication import GlobalCredentialsAuthentication
 
+from django.contrib.auth.models import User
+
+from rest_framework.authtoken.models import Token
 
 # Function based view
 
@@ -292,10 +295,26 @@ class BooksByAuthorView(APIView):
         return Response(serializer_class.data)
     
 
-"""
+
 # View to take credentials and generate token
 
 class TokenGenerationView(APIView):
 
-    pass
-"""
+    def post(self,request,*args,**kwargs):
+
+        username = request.data.get('user_name')
+
+        password = request.data.get('password')
+
+        if User.objects.filter(username = username).exists():
+
+            return Response({'error': 'username already exits'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user=User.objects.create_user(username = username, password=password)
+
+        token,b = Token.objects.get_or_create(user=user)
+
+        return Response({'message': 'user and token created successfully',
+                         'user_name': user.username,
+                         'token': token.key},
+                        status=status.HTTP_200_OK)
