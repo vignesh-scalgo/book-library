@@ -292,10 +292,8 @@ class BooksByAuthorView(APIView):
         return Response(serializer_class.data)
     
 
-"""
 # View to take credentials and generate token
 
 class TokenGenerationView(APIView):
 
     pass
-"""
