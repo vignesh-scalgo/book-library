@@ -297,7 +297,6 @@ class BooksByAuthorView(APIView):
 
 
 # View to take credentials and generate token
-# To check git
 
 class TokenGenerationView(APIView):
 
