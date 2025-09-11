@@ -16,5 +16,10 @@ urlpatterns = [
     path('author/', views.SingleAuthorView.as_view()),
     path('booksbyauthor/<str:name>/', views.BooksByAuthorView.as_view()),
     # path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
-     path('token-auth-generate/', views.TokenGenerationView.as_view()),
+    path('token-auth-generate/', views.TokenGenerationView.as_view()),
+
+    # Viewset based API's URLs (without router config)
+
+    path('authorlist_viewset/', views.ListAuthorViewSetView.as_view({'get':'list'})),
+    path('authorlist_viewset/<int:pk>/', views.ListAuthorViewSetView.as_view({'get':'retrieve'}))
 ]

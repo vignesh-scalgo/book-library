@@ -14,7 +14,7 @@ from rest_framework.decorators import api_view, permission_classes
 
 from rest_framework.views import APIView
 
-from rest_framework import status
+from rest_framework import status, viewsets
 
 # For Authentication
 
@@ -318,3 +318,21 @@ class TokenGenerationView(APIView):
                          'user_name': user.username,
                          'token': token.key},
                         status=status.HTTP_200_OK)
+    
+
+
+
+
+'__________________________________________________________________________________________________________________________________'
+                    
+
+# ViewSet & Router based views
+
+# Author API View by viewset and mapped by routers
+
+class ListAuthorViewSetView(viewsets.ReadOnlyModelViewSet):
+
+    queryset = Author.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = AuthorSerializer
