@@ -28,6 +28,12 @@ urlpatterns = [
     path('book_mixins/', views.SingleBookMixinsView.as_view()),
     path('booksbyauthor_mixins/<str:name>/', views.BooksByAuthorMixinsView.as_view()),
 
+    # GenericView based API's URLs
+
+    path('authorlist_genericview/', views.ListAuthorGenericView.as_view()),
+    path('booklist_genericview/', views.ListBookGenericView.as_view()),
+    path('author_genericview/<int:pk>/', views.SingleAuthorGenericView.as_view()),
+
     # Viewset based API's URLs (without router config)
 
     path('authorlist_viewset/', views.ListAuthorViewSetView.as_view({'get':'list'})),

@@ -450,6 +450,37 @@ class BooksByAuthorMixinsView(mixins.ListModelMixin,
         return self.list(request, *args, **kwargs)
 
 '__________________________________________________________________________________________________________________________________'
+
+
+# Generic View based views
+# --------------------------#
+
+# Author API View
+
+class ListAuthorGenericView(generics.ListAPIView):
+    queryset = Author.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = AuthorSerializer
+
+# Book API View
+
+class ListBookGenericView(generics.ListAPIView):
+    queryset = Books.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = BooksSerializer
+
+# Single Author View - CRUD
+
+class SingleAuthorGenericView(generics.RetrieveUpdateDestroyAPIView,
+                              generics.CreateAPIView):
+    queryset = Author.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = AuthorSerializer
+
+'__________________________________________________________________________________________________________________________________'
                     
 
 # ViewSet & Router based views
