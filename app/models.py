@@ -34,4 +34,4 @@ class Books(models.Model):
         verbose_name_plural = 'Books'
 
     def __str__(self):
-        return f'{self.book_id} {self.book_name} {self.book_author}'
+        return f'{self.book_id} {self.book_name} by {self.book_author}'

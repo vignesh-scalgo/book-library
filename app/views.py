@@ -14,7 +14,7 @@ from rest_framework.decorators import api_view, permission_classes
 
 from rest_framework.views import APIView
 
-from rest_framework import status, viewsets
+from rest_framework import status, generics, mixins, viewsets
 
 # For Authentication
 
@@ -31,6 +31,7 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
 # Function based view
+# --------------------- #
 
 """
 @api_view(['GET', 'POST'])
@@ -58,8 +59,9 @@ def list_author(request):
 """
 
 # Class based views
+# ------------------ #
 
-# Author API View
+# Author API View - to list all authors
 
 class ListAuthorView(APIView):
 
@@ -86,7 +88,8 @@ class ListAuthorView(APIView):
         return Response(serializer_class.data)
 
     
-# Books API View --> Return response only when we pass username and password in Headers section
+# Books API View - to list all v=books
+# Return response only when we pass username and password in Headers section
 
 class ListBooksView(APIView):
 
@@ -324,9 +327,133 @@ class TokenGenerationView(APIView):
 
 
 '__________________________________________________________________________________________________________________________________'
+
+
+
+# Mixins based views
+# --------------------- #
+
+# Author API View
+
+class ListAuthorMixinView(mixins.ListModelMixin,
+                          mixins.RetrieveModelMixin,
+                          generics.GenericAPIView):
+    
+    queryset = Author.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = AuthorSerializer
+
+    def get(self,request,*args,**kwargs):
+        return self.list(request, *args, **kwargs)
+    
+# Book API View
+
+class ListBookMixinView(mixins.ListModelMixin,
+                        generics.GenericAPIView):
+    queryset = Books.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = BooksSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+# Single Author View - CRUD
+    
+class SingleAuthorMixinsView(mixins.RetrieveModelMixin,
+                             mixins.CreateModelMixin,
+                             mixins.UpdateModelMixin,
+                             mixins.DestroyModelMixin,
+                             generics.GenericAPIView):
+    
+    queryset = Author.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = AuthorSerializer
+    
+    def get(self,request,*args,**kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(self, *args, **kwargs)
+    
+# Single Book View - CRUD
+
+class SingleBookMixinsView(mixins.RetrieveModelMixin,
+                           mixins.CreateModelMixin,
+                           mixins.UpdateModelMixin,
+                           mixins.DestroyModelMixin,
+                           generics.GenericAPIView):
+    
+    queryset = Books.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = BooksSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+
+        new_record = request.data
+        try:
+            author_name = new_record.get('book_author')
+            author_record = Author.objects.get(author_name = author_name)
+            author_id = author_record.author_id
+            new_record.update({'book_author':author_id})
+        except:
+            return Response({'Error': 'Author name not gound'}, status=status.HTTP_404_NOT_FOUND)
+
+        return self.create(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+
+        new_record = request.data
+        try:
+            author_name = new_record.get('book_author')
+            author_record = Author.objects.get(author_name = author_name)
+            author_id = author_record.author_id
+            new_record.update({'book_author':author_id})
+        except:
+            return Response({'Error': 'Author name not gound'}, status=status.HTTP_404_NOT_FOUND)
+        
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+    
+class BooksByAuthorMixinsView(mixins.ListModelMixin,
+                              generics.GenericAPIView):
+    
+    queryset = Books.objects.all()
+    permission_classes = [IsAuthenticated,]
+    authentication_classes = [BasicAuthentication,]
+    serializer_class = BooksSerializer
+
+    def get_queryset(self):
+        try:
+            author_name = self.kwargs.get('name')
+            if author_name:
+                queryset = self.queryset.filter(book_author__author_name = author_name)
+                return queryset
+        except:
+            return Response({"Error":"Author not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+'__________________________________________________________________________________________________________________________________'
                     
 
 # ViewSet & Router based views
+# ------------------------------- #
 
 # Author API View by viewset and mapped by routers
 

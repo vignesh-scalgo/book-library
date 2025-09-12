@@ -18,8 +18,18 @@ urlpatterns = [
     # path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('token-auth-generate/', views.TokenGenerationView.as_view()),
 
+    # Mixins based API's URLs
+
+    path('authorlist_mixins/', views.ListAuthorMixinView.as_view()),
+    path('booklist_mixins/', views.ListBookMixinView.as_view()),
+    path('author_mixins/<int:pk>/', views.SingleAuthorMixinsView.as_view()),
+    path('author_mixins/', views.SingleAuthorMixinsView.as_view()),
+    path('book_mixins/<int:pk>/', views.SingleBookMixinsView.as_view()),
+    path('book_mixins/', views.SingleBookMixinsView.as_view()),
+    path('booksbyauthor_mixins/<str:name>/', views.BooksByAuthorMixinsView.as_view()),
+
     # Viewset based API's URLs (without router config)
 
     path('authorlist_viewset/', views.ListAuthorViewSetView.as_view({'get':'list'})),
-    path('authorlist_viewset/<int:pk>/', views.ListAuthorViewSetView.as_view({'get':'retrieve'}))
+    path('authorlist_viewset/<int:pk>/', views.ListAuthorViewSetView.as_view({'get':'retrieve'})),
 ]
