@@ -409,7 +409,7 @@ class SingleBookMixinsView(mixins.RetrieveModelMixin,
             author_id = author_record.author_id
             new_record.update({'book_author':author_id})
         except:
-            return Response({'Error': 'Author name not gound'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'Error': 'Author name not found'}, status=status.HTTP_404_NOT_FOUND)
 
         return self.create(request, *args, **kwargs)
 
@@ -486,7 +486,7 @@ class SingleAuthorGenericView(generics.RetrieveUpdateDestroyAPIView,
 # ViewSet & Router based views
 # ------------------------------- #
 
-# Author API View by viewset and mapped by routers
+# Author API View by viewset and mapped by manual url config
 
 class ListAuthorViewSetView(viewsets.ReadOnlyModelViewSet):
 
@@ -494,3 +494,69 @@ class ListAuthorViewSetView(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [BasicAuthentication,]
     permission_classes = [IsAuthenticated,]
     serializer_class = AuthorSerializer
+
+
+# Author API View by viewset and mapped by routers
+
+class AuthorViewSetRouterView(viewsets.ModelViewSet):
+
+    queryset = Author.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = AuthorSerializer
+
+# Book API View by viewset and mapped by routers
+
+class BookViewSetRouterView(viewsets.ModelViewSet):
+
+    queryset = Books.objects.all()
+    authentication_classes = [BasicAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    serializer_class = BooksSerializer
+
+    def create(self, request, *args, **kwargs):
+            
+        new_record = request.data.copy()        # deep copy
+        try:
+            author_name = new_record.get('book_author')
+            author_record = Author.objects.get(author_name = author_name)
+            author_id = author_record.author_id
+            new_record.update({'book_author':author_id})
+        except:
+            return Response({'Error': 'Author not found'}, 
+                            status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = self.get_serializer(data = new_record)
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def update(self, request, *args, **kwargs):
+        
+        id = kwargs.get('pk')
+        record_to_update = request.data.copy()
+
+        try:
+            query = Books.objects.get(book_id = id)
+            author_name = record_to_update.get('book_author')
+            author_record = Author.objects.get(author_name = author_name)
+            author_id = author_record.author_id
+            record_to_update.update({'book_author':author_id})
+        except:
+            return Response({'Error': 'Author not found'}, 
+                            status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = self.get_serializer(query, data = record_to_update)
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

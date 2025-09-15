@@ -1,8 +1,17 @@
-from django.urls import path
+from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
 
 # from rest_framework.authtoken.views import obtain_auth_token 
 
 from . import views
+
+# Router
+
+router = DefaultRouter()
+
+router.register(r'author_viewset_router', views.AuthorViewSetRouterView)
+router.register(r'book_viewset_router', views.BookViewSetRouterView)
 
 urlpatterns = [
     # path('booklist/', views.list_books, name="booklist"),
@@ -38,4 +47,7 @@ urlpatterns = [
 
     path('authorlist_viewset/', views.ListAuthorViewSetView.as_view({'get':'list'})),
     path('authorlist_viewset/<int:pk>/', views.ListAuthorViewSetView.as_view({'get':'retrieve'})),
+
+    # Viewset based API's URLs (without router config)
+    path('', include(router.urls))
 ]
