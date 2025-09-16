@@ -118,9 +118,12 @@ class SingleAuthorView(APIView):
 
     # API logic to Read Author
 
-    def get(self,request,*args,**kwargs):
+    def get(self,request,id,*args,**kwargs):
 
-        id = kwargs.get('id')
+        print(id)                   # Return actual id
+        print(kwargs.get('id'))     # here, now return None
+
+        # id = kwargs.get('id')
 
         query = Author.objects.filter(author_id = id)
 
