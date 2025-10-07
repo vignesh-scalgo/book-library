@@ -24,11 +24,26 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 class BooksSerializer(serializers.ModelSerializer):
 
+    # to add one more extra field in book response
+    # author_age from author model
+    # get_author_age()
+
+    author_age = serializers.SerializerMethodField()
+
     class Meta:
 
         model = Books
 
-        fields = '__all__'
+        # fields = '__all__'
+
+        fields = [
+            'book_id',
+            'book_name',
+            'book_categorey',
+            'book_price',
+            'book_author',
+            'author_age'
+        ]
 
     # Code to return 'author_name' instead of 'author_id'
 
@@ -41,3 +56,11 @@ class BooksSerializer(serializers.ModelSerializer):
         # data['book_categorey'] = instance.book_author.author_language
 
         return data
+    
+    def get_author_age(self,instance):
+
+        try:
+            author_age = instance.book_author.author_age
+            return author_age
+        except:
+            return None
